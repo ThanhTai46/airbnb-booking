@@ -3,8 +3,20 @@ import React, { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
 import MenuItem from "./MenuItem";
-function UserMenu() {
+import RegisterModal from "../modals/RegisterModal";
+import { useRegisterModal } from "@/app/hooks/useRegisterModal";
+import { useLoginModal } from "@/app/hooks/useLoginModal";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
+
+interface currentUserProps {
+  currentUser: User | null;
+}
+
+const UserMenu: React.FC<currentUserProps> = ({ currentUser }) => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
 
   const toggleMenu = useCallback(() => {
     setIsOpenMenu(!isOpenMenu);
@@ -31,13 +43,28 @@ function UserMenu() {
       {isOpenMenu && (
         <div className="transition ease-in duration-300 absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
           <div className="flex flex-col cursor-pointer">
-            <MenuItem label="Sign up" onClick={() => {}} bold />
-            <MenuItem label="Login" onClick={() => {}} />
+            {currentUser ? (
+              <>
+                <MenuItem label="My trips" onClick={loginModal.onOpen} />
+                <MenuItem label="My favorites" onClick={loginModal.onOpen} />
+                <MenuItem label="My reservations" onClick={loginModal.onOpen} />
+                <MenuItem label="My properties" onClick={loginModal.onOpen} />
+                <MenuItem label="Airbnb my home" onClick={loginModal.onOpen} />
+                <hr />
+                <MenuItem label="Log out" onClick={() => signOut()} />
+              </>
+            ) : (
+              <>
+                <RegisterModal />
+                <MenuItem label="Sign up" onClick={registerModal.onOpen} bold />
+                <MenuItem label="Login" onClick={loginModal.onOpen} />
+              </>
+            )}
           </div>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default UserMenu;

@@ -1,14 +1,18 @@
 "use client";
 import Image from "next/image";
 
-function Avatar() {
+interface AvatarProps {
+  imageUser?: string;
+}
+function Avatar({ imageUser }: AvatarProps) {
+  console.log("imageUser: ", imageUser);
   return (
     <Image
       //   onClick={() => {}}
       width="30"
       height="30"
       alt="Avatar"
-      src="/images/avatar.jpeg"
+      src={imageUser || "/images/avatar.jpeg"}
       className="rounded-full"
     />
   );

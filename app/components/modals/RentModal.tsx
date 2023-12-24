@@ -5,6 +5,7 @@ import Modal from './Modal'
 import { useRentModal } from '@/app/hooks/useRentModal'
 import CategoryRent from './components/CategoryRent'
 import { FieldValues, useForm } from 'react-hook-form'
+import next from 'next'
 
 enum STEPS {
     CATEGORY = 0,
@@ -35,8 +36,9 @@ const RentModal = () => {
             }
         })
     const [step, setStep] = useState(STEPS.CATEGORY)
+    console.log("🚀 ~ file: RentModal.tsx:39 ~ RentModal ~ step:", step)
     const category = watch('category');
-    const [body, setBody] = useState();
+    const [body, setBody] = useState<any>();
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -69,25 +71,29 @@ const RentModal = () => {
         return 'Back'
     }, [step]);
 
-    useEffect(() => {
+    // let body;
+    useMemo(() => {
         switch (step) {
             case STEPS.CATEGORY:
-                setStep(STEPS.CATEGORY)
+                // body = (<CategoryRent setCustomValue={setCustomValue} category={category} />)
+                break;
+            case STEPS.LOCATION:
+                setBody(<div>Hllo</div>)
                 break;
             default:
                 break;
         }
-    }, [body])
+    }, [step])
     return (
         <Modal
             isOpen={rentModal.isOpen}
             onClose={rentModal.onClose}
-            onSubmit={rentModal.onClose}
+            onSubmit={onNext}
             title='Airbnb your home'
             secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
             actionLabel={actionLabel}
             secondaryActionLabel={secondaryActionLabel}
-            body={<CategoryRent setCustomValue={setCustomValue} category={category} />}
+            body={body}
         />
     )
 }

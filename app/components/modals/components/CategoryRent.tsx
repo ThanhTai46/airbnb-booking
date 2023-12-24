@@ -1,8 +1,7 @@
 import React from 'react'
 import Heading from '../../Heading'
 import { categories } from '../../navbar/Categories'
-import Input from '../../Inputs/input'
-import CategoryInput from '../../Inputs/categoryInput'
+import CategoryInput from '@/app/components/Inputs/CategoryInput'
 
 interface Props {
     setCustomValue: (id: string, value: any) => void,

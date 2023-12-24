@@ -1,16 +1,20 @@
 "use client";
+
 import React from "react";
 import Container from "../Container";
 import Logo from "./Logo";
 import Search from "./Search";
 import UserMenu from "./UserMenu";
 import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import Categories from "./Categories";
 
 interface currentUserProps {
   currentUser: User | null;
 }
 
-const Navbar: React.FC<currentUserProps> = ({ currentUser }) => {
+const Navbar: React.FC = () => {
+  const { data: User } = useSession();
   return (
     <div className="w-full bg-white z-10  fixed">
       <div className="py-4 border-b-[1px]">
@@ -26,10 +30,11 @@ const Navbar: React.FC<currentUserProps> = ({ currentUser }) => {
           >
             <Logo />
             <Search />
-            <UserMenu currentUser={currentUser} />
+            <UserMenu />
           </div>
         </Container>
       </div>
+      <Categories />
     </div>
   );
 };

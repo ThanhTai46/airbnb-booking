@@ -5,7 +5,6 @@ interface AvatarProps {
   imageUser?: string;
 }
 function Avatar({ imageUser }: AvatarProps) {
-  console.log("imageUser: ", imageUser);
   return (
     <Image
       //   onClick={() => {}}

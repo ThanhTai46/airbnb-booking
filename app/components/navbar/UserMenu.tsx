@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
@@ -6,26 +7,35 @@ import MenuItem from "./MenuItem";
 import RegisterModal from "../modals/RegisterModal";
 import { useRegisterModal } from "@/app/hooks/useRegisterModal";
 import { useLoginModal } from "@/app/hooks/useLoginModal";
-import { User } from "@prisma/client";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRentModal } from "@/app/hooks/useRentModal";
 
-interface currentUserProps {
-  currentUser: User | null;
-}
 
-const UserMenu: React.FC<currentUserProps> = ({ currentUser }) => {
+
+const UserMenu: React.FC = () => {
+  const { data: currentUser } = useSession()
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
 
   const toggleMenu = useCallback(() => {
     setIsOpenMenu(!isOpenMenu);
   }, [isOpenMenu]);
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen()
+    }
+
+    rentModal.onOpen();
+  }, [currentUser, loginModal])
+
   return (
     <div className="relative">
+
       <div className="flex items-center gap-3">
-        <div className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer">
+        <div onClick={onRent} className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer">
           Airbnb your home
         </div>
         <div
@@ -36,7 +46,7 @@ const UserMenu: React.FC<currentUserProps> = ({ currentUser }) => {
         >
           <AiOutlineMenu />
           <div className="hidden md:block">
-            <Avatar imageUser={currentUser?.image as string} />
+            <Avatar imageUser={currentUser?.user?.image as string} />
           </div>
         </div>
       </div>
@@ -49,7 +59,7 @@ const UserMenu: React.FC<currentUserProps> = ({ currentUser }) => {
                 <MenuItem label="My favorites" onClick={loginModal.onOpen} />
                 <MenuItem label="My reservations" onClick={loginModal.onOpen} />
                 <MenuItem label="My properties" onClick={loginModal.onOpen} />
-                <MenuItem label="Airbnb my home" onClick={loginModal.onOpen} />
+                <MenuItem label="Airbnb my home" onClick={rentModal.onOpen} />
                 <hr />
                 <MenuItem label="Log out" onClick={() => signOut()} />
               </>

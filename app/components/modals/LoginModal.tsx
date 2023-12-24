@@ -20,6 +20,7 @@ import Error from "../Error";
 import { useLoginModal } from "@/app/hooks/useLoginModal";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useRegisterModal } from "@/app/hooks/useRegisterModal";
 
 export type FormData = {
   email: string;
@@ -28,6 +29,8 @@ export type FormData = {
 
 const LoginModal = () => {
   const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -95,7 +98,7 @@ const LoginModal = () => {
       <hr />
       <Button
         label="Continue with Google"
-        onClick={() => {}}
+        onClick={() => { signIn("google") }}
         outline
         icon={FcGoogle}
       />
@@ -107,12 +110,15 @@ const LoginModal = () => {
       />
       <div className="text-neutral-500 text-center mt-4 font-light">
         <div className="justify-center flex flex-row items-center gap-2">
-          <div>Already have an account?</div>
+          <div>First time using Airbnb?</div>
           <div
-            onClick={loginModal.onClose}
+            onClick={() => {
+              loginModal.onClose()
+              registerModal.onOpen()
+            }}
             className="text-neutral-800 cursor-pointer hover:underline"
           >
-            Login
+            Create an account
           </div>
         </div>
       </div>

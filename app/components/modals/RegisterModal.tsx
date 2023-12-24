@@ -19,6 +19,7 @@ import { AiFillGithub } from "react-icons/ai";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signupSchema } from "@/app/libs/validation/schemas";
 import Error from "../Error";
+import { useLoginModal } from "@/app/hooks/useLoginModal";
 
 export type FormData = {
   name: string;
@@ -28,6 +29,8 @@ export type FormData = {
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
+
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -105,13 +108,13 @@ const RegisterModal = () => {
       <hr />
       <Button
         label="Continue with Google"
-        onClick={() => {}}
+        onClick={() => { }}
         outline
         icon={FcGoogle}
       />
       <Button
         label="Continue with Github"
-        onClick={() => {}}
+        onClick={() => { }}
         outline
         icon={AiFillGithub}
       />
@@ -119,7 +122,10 @@ const RegisterModal = () => {
         <div className="justify-center flex flex-row items-center gap-2">
           <div>Already have an account?</div>
           <div
-            onClick={registerModal.onClose}
+            onClick={() => {
+              loginModal.onOpen()
+              registerModal.onClose()
+            }}
             className="text-neutral-800 cursor-pointer hover:underline"
           >
             Login
@@ -131,6 +137,7 @@ const RegisterModal = () => {
   return (
     <>
       <Modal
+        disabled={isLoading}
         title="Register"
         actionLabel="Continue"
         isOpen={registerModal.isOpen}

@@ -25,7 +25,9 @@ const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">Op
 const Map = ({ center }: MapProps) => {
   return <MapContainer
     center={center as L.LatLngExpression || [51, -0.09]}
-    zoom={center ? 4 : 2}
+    zoom={center ? 6 : 2}
+    zoomAnimation
+    boxZoom={true}
     scrollWheelZoom={true}
     className="h-[50vh] rounded-lg"
   >

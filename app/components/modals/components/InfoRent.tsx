@@ -3,8 +3,6 @@ import Heading from "../../Heading";
 import Counter from "../../Inputs/Counter";
 
 const InfoRent = ({ setCustomValue, guestCount, roomCount, bathroomCount }: any) => {
-    console.log('guestCount: ', guestCount);
-
     return <div className="flex flex-col gap-8">
         <Heading
             title="Share some basics about your place"

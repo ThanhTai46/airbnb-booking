@@ -8,6 +8,9 @@ import { FieldValues, useForm } from 'react-hook-form'
 import next from 'next'
 import LocationRent from './components/LocationRent'
 import InfoRent from './components/InfoRent'
+import UploadImageRent from './components/UploadImageRent'
+import DescriptionRent from './components/DescriptionRent'
+import PriceRent from './components/PriceRent'
 
 enum STEPS {
     CATEGORY = 0,
@@ -19,7 +22,8 @@ enum STEPS {
 }
 const RentModal = () => {
     const rentModal = useRentModal()
-    const { register,
+    const {
+        register,
         handleSubmit,
         setValue,
         getValues,
@@ -39,10 +43,16 @@ const RentModal = () => {
             }
         })
     const [step, setStep] = useState(STEPS.CATEGORY)
+    const imageSrc = watch('imageSrc');
     const category = watch('category');
     const guestCount = watch("guestCount");
     const roomCount = watch("roomCount");
     const bathroomCount = watch("bathroomCount");
+    const title = watch("title");
+    const description = watch("description");
+    const price = watch("price");
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const location = watch("location");
     const [body, setBody] = useState<any>();
@@ -89,10 +99,16 @@ const RentModal = () => {
             case STEPS.INFO:
                 setBody(<InfoRent setCustomValue={setCustomValue} guestCount={guestCount} roomCount={roomCount} bathroomCount={bathroomCount} />)
                 break;
+            case STEPS.IMAGES:
+                setBody(<UploadImageRent setCustomValue={setCustomValue} imageSrc={imageSrc} />)
+            case STEPS.DESCRIPTION:
+                setBody(<DescriptionRent isLoading={isLoading} register={register} errors={errors} />)
+            case STEPS.PRICE:
+                setBody(<PriceRent isLoading={isLoading} register={register} errors={errors} />)
             default:
                 break;
         }
-    }, [step, location, guestCount, roomCount, bathroomCount])
+    }, [step, location, guestCount, roomCount, bathroomCount, imageSrc, title, description, price])
     return (
         <Modal
             isOpen={rentModal.isOpen}

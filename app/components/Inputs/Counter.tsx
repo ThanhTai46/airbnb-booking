@@ -15,7 +15,6 @@ const Counter: React.FC<CouterProps> = ({
 }) => {
 
     const onAdd = useCallback(() => {
-        console.log('value: ');
         onChange(value + 1);
     }, [onChange, value])
 

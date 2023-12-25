@@ -4,13 +4,18 @@ import RegisterModal from "./components/modals/RegisterModal";
 import { Toaster } from "react-hot-toast";
 import LoginModal from "./components/modals/LoginModal";
 import { NextAuthProvider } from "./providers";
-import Categories from "./components/navbar/Categories";
 import RentModal from "./components/modals/RentModal";
+import { Nunito } from "next/font/google";
 
 export const metadata = {
   title: "Airbnb",
   description: "Airbnb",
 };
+
+
+const font = Nunito({
+  subsets: ["latin"],
+});
 
 
 export default async function RootLayout({
@@ -20,7 +25,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className={font.className}>
         <NextAuthProvider>
           <Navbar />
           <RentModal />

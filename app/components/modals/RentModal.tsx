@@ -6,20 +6,23 @@ import { useRentModal } from '@/app/hooks/useRentModal'
 import CategoryRent from './components/CategoryRent'
 import { FieldValues, useForm } from 'react-hook-form'
 import next from 'next'
+import LocationRent from './components/LocationRent'
+import InfoRent from './components/InfoRent'
 
 enum STEPS {
     CATEGORY = 0,
     LOCATION = 1,
-    INFO = 3,
-    IMAGES = 4,
-    DESCRIPTION = 5,
-    PRICE = 6
+    INFO = 2,
+    IMAGES = 3,
+    DESCRIPTION = 4,
+    PRICE = 5
 }
 const RentModal = () => {
     const rentModal = useRentModal()
     const { register,
         handleSubmit,
         setValue,
+        getValues,
         watch,
         formState: { errors } }
         = useForm<FieldValues>({
@@ -36,8 +39,12 @@ const RentModal = () => {
             }
         })
     const [step, setStep] = useState(STEPS.CATEGORY)
-    console.log("🚀 ~ file: RentModal.tsx:39 ~ RentModal ~ step:", step)
     const category = watch('category');
+    const guestCount = watch("guestCount");
+    const roomCount = watch("roomCount");
+    const bathroomCount = watch("bathroomCount");
+
+    const location = watch("location");
     const [body, setBody] = useState<any>();
 
     const setCustomValue = (id: string, value: any) => {
@@ -71,19 +78,21 @@ const RentModal = () => {
         return 'Back'
     }, [step]);
 
-    // let body;
     useMemo(() => {
         switch (step) {
             case STEPS.CATEGORY:
-                // body = (<CategoryRent setCustomValue={setCustomValue} category={category} />)
+                setBody(<CategoryRent setCustomValue={setCustomValue} category={category} />)
                 break;
             case STEPS.LOCATION:
-                setBody(<div>Hllo</div>)
+                setBody(<LocationRent setCustomValue={setCustomValue} location={location} />)
+                break;
+            case STEPS.INFO:
+                setBody(<InfoRent setCustomValue={setCustomValue} guestCount={guestCount} roomCount={roomCount} bathroomCount={bathroomCount} />)
                 break;
             default:
                 break;
         }
-    }, [step])
+    }, [step, location, guestCount, roomCount, bathroomCount])
     return (
         <Modal
             isOpen={rentModal.isOpen}

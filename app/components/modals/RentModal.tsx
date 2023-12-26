@@ -4,13 +4,16 @@ import React, { useEffect, useMemo, useState } from 'react'
 import Modal from './Modal'
 import { useRentModal } from '@/app/hooks/useRentModal'
 import CategoryRent from './components/CategoryRent'
-import { FieldValues, useForm } from 'react-hook-form'
-import next from 'next'
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import LocationRent from './components/LocationRent'
 import InfoRent from './components/InfoRent'
 import UploadImageRent from './components/UploadImageRent'
 import DescriptionRent from './components/DescriptionRent'
 import PriceRent from './components/PriceRent'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { useLoading } from '@/app/hooks/useLoading'
 
 enum STEPS {
     CATEGORY = 0,
@@ -21,10 +24,12 @@ enum STEPS {
     PRICE = 5
 }
 const RentModal = () => {
+    const { onOpen, onClose } = useLoading();
     const rentModal = useRentModal()
     const {
         register,
         handleSubmit,
+        reset,
         setValue,
         getValues,
         watch,
@@ -53,9 +58,10 @@ const RentModal = () => {
     const price = watch("price");
 
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const location = watch("location");
-    const [body, setBody] = useState<any>();
+    const [body, setBody] = useState<React.ReactElement>();
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -65,12 +71,37 @@ const RentModal = () => {
         })
     }
 
+
     const onBack = () => {
         setStep(value => value - 1)
     }
 
     const onNext = () => {
         setStep(value => value + 1)
+    }
+
+    const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+        if (step !== STEPS.PRICE) {
+            return onNext()
+        }
+
+        setIsLoading(true);
+        await axios.post('/api/listings', data)
+            .then(() => {
+                toast.success('Listing created!');
+                router.refresh();
+                reset();
+                setStep(STEPS.CATEGORY)
+                onOpen();
+                rentModal.onClose();
+            })
+            .catch(() => {
+                toast.error('Something went wrong.');
+            })
+            .finally(() => {
+                onClose();
+                setIsLoading(false);
+            })
     }
 
     const actionLabel = useMemo(() => {
@@ -101,19 +132,22 @@ const RentModal = () => {
                 break;
             case STEPS.IMAGES:
                 setBody(<UploadImageRent setCustomValue={setCustomValue} imageSrc={imageSrc} />)
+                break;
             case STEPS.DESCRIPTION:
                 setBody(<DescriptionRent isLoading={isLoading} register={register} errors={errors} />)
+                break;
             case STEPS.PRICE:
                 setBody(<PriceRent isLoading={isLoading} register={register} errors={errors} />)
+                break;
             default:
                 break;
         }
-    }, [step, location, guestCount, roomCount, bathroomCount, imageSrc, title, description, price])
+    }, [step, location, guestCount, roomCount, bathroomCount, imageSrc, title, description, price, category])
     return (
         <Modal
             isOpen={rentModal.isOpen}
             onClose={rentModal.onClose}
-            onSubmit={onNext}
+            onSubmit={handleSubmit(onSubmit)}
             title='Airbnb your home'
             secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
             actionLabel={actionLabel}

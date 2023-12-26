@@ -4,17 +4,12 @@ import React from "react";
 import Container from "../Container";
 import Logo from "./Logo";
 import Search from "./Search";
-import UserMenu from "./UserMenu";
-import { User } from "@prisma/client";
-import { useSession } from "next-auth/react";
 import Categories from "./Categories";
+import dynamic from "next/dynamic";
 
-interface currentUserProps {
-  currentUser: User | null;
-}
+const UserMenu = dynamic(() => import("./UserMenu"), { ssr: false, loading: () => <div>Loading...</div> });
 
 const Navbar: React.FC = () => {
-  const { data: User } = useSession();
   return (
     <div className="w-full bg-white z-10  fixed">
       <div className="py-4 border-b-[1px]">
